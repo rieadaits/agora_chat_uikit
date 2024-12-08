@@ -5,19 +5,20 @@ import 'package:flutter/material.dart';
 
 // jashem:
 String jashemToken =
-    "007eJxTYDjW7LVRLOZQ0kfPy4ZKax+bljpLXVtxKGZ2bEKHckzlnwUKDGbGScaGFmkmpiapFiYGphaJJiZp5slJRsbJluZmSYnGSkmhaQ2BjAzLPCOZGRlYGRiBEMRXYbBMSUo1MU8y0DU0ME7WNTRMTdO1tEg00k0yNUgxSk0yMUoxMwEAP94meA==";
+    "007eJxTYAg5999o5hT2d5851U9HaguKr9qrUc3DsXRilNKm2dMfKYUrMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUai9rfSGsIZGRQnaDFysjAysAIhCC+CoNlSlKqiXmSga6hgXGyrqFhapqupUWikW6SqUGKUWqSiVGKmQkAgn4koQ==";
+
 //riead
 String rieadToken =
-    "007eJxTYHj2ceXvOVrbTO/1nXzlK/tvma3Z+8e1bsmqZ1fmL5qUFzpBgcHMOMnY0CLNxNQk1cLEwNQi0cQkzTw5ycg42dLcLCnR+H9iaFpDICPDx/79jIwMrAyMQAjiqzCYp1oapViaGugaGhgn6xoapqbpJhlbpOqapZglp1hYmBibpxgDAMtGKnc=";
+    "007eJxTYFhnllZVXzQ1ST+Su+u6xjWHUG53heCvy7kitErzdl006FBgMDNOMja0SDMxNUm1MDEwtUg0MUkzT04yMk62NDdLSjT+Z3cjrSGQkcFmDi8rIwMrAyMQgvgqDOaplkYplqYGuoYGxsm6hoapabpJxhapumYpZskpFhYmxuYpxgBHaSRx";
 
 //enamul
 String enamulToken =
     "007eJxTYDh90qf28pzH2VvD+Nt3hW94YHslaOb6Ko4styU986e2mkUqMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaWyaFpjUEMjKIxO1kZWRgZWAEQhBfhcEiMcks1dLMQNfQwDhZ19AwNU030dDISNciyTApxdw0NTXRzAQAqgYnRA==";
 
 class ChatConfig {
-  static String appKey = '611147007#1332714';
-  static String userId = "riead";
-  static String agoraToken = rieadToken;
+  static String appKey = "611147007#1332714";
+  static String userId = "jashem";
+  static String agoraToken = jashemToken;
 }
 
 void main() async {
@@ -187,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(groupIdThree);
+        await ChatClient.getInstance.chatManager.getConversation(userId);
 
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
