@@ -1,11 +1,12 @@
 export 'package:agora_chat_sdk/agora_chat_sdk.dart';
 export 'package:file_picker/file_picker.dart';
+export 'package:get_thumbnail_video/index.dart';
+export 'package:get_thumbnail_video/video_thumbnail.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:just_audio/just_audio.dart';
 export 'package:open_filex/open_filex.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:record/record.dart';
-export 'package:video_thumbnail/video_thumbnail.dart';
 
 export 'controllers/chat_base_controller.dart';
 export 'em_chat_define.dart';

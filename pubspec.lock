@@ -61,10 +61,10 @@ packages:
     dependency: transitive
     description:
       name: cross_file
-      sha256: "55d7b444feb71301ef6b8838dbc1ae02e63dd48c8773f3810ff53bb1e2945b32"
+      sha256: "7caf6a750a0c04effbb52a676dce9a4a592e10ad35c34d6d2d0e4811160d5670"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.4+1"
+    version: "0.3.4+2"
   crypto:
     dependency: transitive
     description:
@@ -173,14 +173,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get_thumbnail_video:
+    dependency: "direct main"
+    description:
+      name: get_thumbnail_video
+      sha256: ff61495b42051765d2a9e93bd14dac7ede5853033837bde71c27575a192c53fc
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.3"
   http:
     dependency: transitive
     description:
       name: http
-      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
+      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "1.2.2"
   http_parser:
     dependency: transitive
     description:
@@ -209,10 +217,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_for_web
-      sha256: "5d6eb13048cd47b60dbf1a5495424dea226c5faf3950e20bf8120a58efb5b5f3"
+      sha256: "717eb042ab08c40767684327be06a5d8dbb341fe791d514e4b92c7bbe1b7bb83"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.4"
+    version: "3.0.6"
   image_picker_ios:
     dependency: transitive
     description:
@@ -578,14 +586,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  video_thumbnail:
-    dependency: "direct main"
-    description:
-      name: video_thumbnail
-      sha256: "3455c189d3f0bb4e3fc2236475aa84fe598b9b2d0e08f43b9761f5bc44210016"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.3"
   vm_service:
     dependency: transitive
     description:
@@ -598,10 +598,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      sha256: cd3543bd5798f6ad290ea73d210f423502e71900302dde696f8bff84bf89a1cb
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.1"
+    version: "1.1.0"
   win32:
     dependency: "direct main"
     description:
@@ -620,4 +620,4 @@ packages:
     version: "1.0.4"
 sdks:
   dart: ">=3.5.0 <4.0.0"
-  flutter: ">=3.19.0"
+  flutter: ">=3.22.0"
