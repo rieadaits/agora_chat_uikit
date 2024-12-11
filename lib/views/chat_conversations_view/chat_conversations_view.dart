@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -76,20 +74,20 @@ class ChatConversationsController extends ChatBaseController {
   }
 
   /// load all conversations Locally and refresh the list.
-  /* Future<void> loadAllConversations() async {
+  Future<void> loadAllConversations() async {
     List<ChatConversation> list =
         await ChatClient.getInstance.chatManager.loadAllConversations();
     conversationList = await sortHandle?.call(list) ?? list;
-  }*/
-
-  Future<void> loadAllConversations() async {
-    ChatCursorResult<ChatConversation> result =
-        await ChatClient.getInstance.chatManager.fetchConversation();
-
-    List<ChatConversation> list = result.data;
-
-    conversationList = await sortHandle?.call(list) ?? list;
   }
+
+  // Future<void> loadAllConversations() async {
+  //   ChatCursorResult<ChatConversation> result =
+  //       await ChatClient.getInstance.chatManager.fetchConversation();
+  //
+  //   List<ChatConversation> list = result.data;
+  //
+  //   conversationList = await sortHandle?.call(list) ?? list;
+  // }
 
   /// Delete conversation with conversation id.
   ///
@@ -320,7 +318,6 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
   }
 
   final List<ChatConversation> _tmpList = [];
-  final List<String> groupNames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -399,8 +396,10 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
                           avatar: widget.avatarBuilder
                                   ?.call(context, conversation) ??
                               ChatImageLoader.defaultAvatar(size: 50),
-                          title: widget.nicknameBuilder
-                              ?.call(context, conversation,),
+                          title: widget.nicknameBuilder?.call(
+                            context,
+                            conversation,
+                          ),
                           conversation: conversation,
                           onTap: (conversation) {
                             widget.onItemTap?.call(conversation);

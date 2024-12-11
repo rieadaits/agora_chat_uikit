@@ -21,35 +21,32 @@ class ChatConversationListTile extends StatefulWidget {
   final ChatConversation conversation;
 
   @override
-  State<ChatConversationListTile> createState() => _ChatConversationListTileState();
+  State<ChatConversationListTile> createState() =>
+      _ChatConversationListTileState();
 }
 
 class _ChatConversationListTileState extends State<ChatConversationListTile> {
-
-  String groupName = '';
-
-
   @override
   void initState() {
     super.initState();
-    getGroupNameById();
+    // getGroupNameById();
   }
 
-  getGroupNameById() async{
-    ChatCursorResult<ChatGroupInfo> grpData =
-    await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
-
-    final data = grpData.data;
-
-    for (var element in data) {
-      if(element.groupId == widget.conversation.id){
-        setState(() {
-          groupName = element.name!;
-        });
-      }
-    }
-
-  }
+  // getGroupNameById() async{
+  //   ChatCursorResult<ChatGroupInfo> grpData =
+  //   await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+  //
+  //   final data = grpData.data;
+  //
+  //   for (var element in data) {
+  //     if(element.groupId == widget.conversation.id){
+  //       setState(() {
+  //         groupName = element.name!;
+  //       });
+  //     }
+  //   }
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +68,10 @@ class _ChatConversationListTileState extends State<ChatConversationListTile> {
                     Flexible(
                       child: widget.title ??
                           Text(
-                            groupName,
+                            widget.conversation.id,
                             style: const TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

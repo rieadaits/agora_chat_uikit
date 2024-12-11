@@ -24,7 +24,7 @@ class _ArchiveMessagesPageState extends State<ArchiveMessagesPage> {
   void initState() {
     super.initState();
     controller = ChatMessageListController(widget.conversation);
-    getGroupNameById();
+    // getGroupNameById();
   }
 
   @override
@@ -33,26 +33,28 @@ class _ArchiveMessagesPageState extends State<ArchiveMessagesPage> {
     super.dispose();
   }
 
-  getGroupNameById() async {
-    ChatCursorResult<ChatGroupInfo> grpData =
-        await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
-
-    final data = grpData.data;
-
-    for (var element in data) {
-      if (element.groupId == widget.conversation.id) {
-        setState(() {
-          groupName = element.name!;
-        });
-      }
-    }
-  }
+  // getGroupNameById() async {
+  //   ChatCursorResult<ChatGroupInfo> grpData =
+  //       await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+  //
+  //   final data = grpData.data;
+  //
+  //   for (var element in data) {
+  //     if (element.groupId == widget.conversation.id) {
+  //       setState(() {
+  //         groupName = element.name!;
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(groupName),
+        title: Text(widget.conversation.id),
+        backgroundColor: Colors.white,
       ),
       body: SafeArea(
         child: ChatMessagesView(

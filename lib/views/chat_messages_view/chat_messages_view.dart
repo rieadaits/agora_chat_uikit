@@ -265,7 +265,10 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
 
                   widget.messageListViewController.sendMessage(willSend);
                 },
-              )
+              ),
+        const SizedBox(
+          height: 10,
+        ),
       ],
     );
 
@@ -344,32 +347,30 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
             200, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 80,
       );
-      if (imageData != null) {
-        final directory = await getApplicationCacheDirectory();
-        String thumbnailPath =
-            '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
-        final file = File(thumbnailPath);
-        file.writeAsBytesSync(imageData);
+      final directory = await getApplicationCacheDirectory();
+      String thumbnailPath =
+          '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
+      final file = File(thumbnailPath);
+      file.writeAsBytesSync(imageData);
 
-        final videoFile = File(video.path);
+      final videoFile = File(video.path);
 
-        Image.file(file)
-            .image
-            .resolve(const ImageConfiguration())
-            .addListener(ImageStreamListener((info, synchronousCall) {
-          final msg = ChatMessage.createVideoSendMessage(
-            targetId: widget.messageListViewController.conversation.id,
-            filePath: video.path,
-            thumbnailLocalPath: file.path,
-            chatType: ChatType.values[
-                widget.messageListViewController.conversation.type.index],
-            width: info.image.width.toDouble(),
-            height: info.image.height.toDouble(),
-            fileSize: videoFile.sizeInBytes,
-          );
-          widget.messageListViewController.sendMessage(msg);
-        }));
-      }
+      Image.file(file)
+          .image
+          .resolve(const ImageConfiguration())
+          .addListener(ImageStreamListener((info, synchronousCall) {
+        final msg = ChatMessage.createVideoSendMessage(
+          targetId: widget.messageListViewController.conversation.id,
+          filePath: video.path,
+          thumbnailLocalPath: file.path,
+          chatType: ChatType
+              .values[widget.messageListViewController.conversation.type.index],
+          width: info.image.width.toDouble(),
+          height: info.image.height.toDouble(),
+          fileSize: videoFile.sizeInBytes,
+        );
+        widget.messageListViewController.sendMessage(msg);
+      }));
     }
   }
 
