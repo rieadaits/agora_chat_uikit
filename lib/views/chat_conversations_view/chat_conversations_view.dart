@@ -98,6 +98,7 @@ class ChatConversationsController extends ChatBaseController {
     if (index >= 0) {
       list.removeAt(index);
       await ChatClient.getInstance.chatManager.deleteRemoteConversation(id);
+      await ChatClient.getInstance.chatManager.deleteConversation(id);
       conversationList = await sortHandle?.call(list) ?? list;
     }
   }
