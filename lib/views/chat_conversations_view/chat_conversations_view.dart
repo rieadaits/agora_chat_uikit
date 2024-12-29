@@ -74,20 +74,23 @@ class ChatConversationsController extends ChatBaseController {
   }
 
   /// load all conversations Locally and refresh the list.
-  Future<void> loadAllConversations() async {
-    List<ChatConversation> list =
-        await ChatClient.getInstance.chatManager.loadAllConversations();
-    conversationList = await sortHandle?.call(list) ?? list;
-  }
-
   // Future<void> loadAllConversations() async {
-  //   ChatCursorResult<ChatConversation> result =
-  //       await ChatClient.getInstance.chatManager.fetchConversation();
-  //
-  //   List<ChatConversation> list = result.data;
-  //
+  //   List<ChatConversation> list =
+  //       await ChatClient.getInstance.chatManager.loadAllConversations();
   //   conversationList = await sortHandle?.call(list) ?? list;
   // }
+
+  Future<void> loadAllConversations() async {
+    ChatCursorResult<ChatConversation> result =
+        await ChatClient.getInstance.chatManager.fetchConversationsByOptions(
+            options: ConversationFetchOptions(
+      pageSize: 50,
+    ));
+
+    List<ChatConversation> list = result.data;
+
+    conversationList = await sortHandle?.call(list) ?? list;
+  }
 
   /// Delete conversation with conversation id.
   ///
