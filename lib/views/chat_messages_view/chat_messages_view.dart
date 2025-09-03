@@ -134,8 +134,11 @@ class ChatMessagesView extends StatefulWidget {
 }
 
 class _ChatMessagesViewState extends State<ChatMessagesView> {
+  late final RecordConfig recordConfig;
+  Directory? _directory;
+  String? fileName;
   final ImagePicker _picker = ImagePicker();
-  final Record _audioRecorder = Record();
+  final AudioRecorder _audioRecorder = AudioRecorder();
   final AudioPlayer _player = AudioPlayer();
   final FocusNode _focusNode = FocusNode();
   int _recordDuration = 0;
@@ -144,9 +147,37 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
   Timer? _timer;
   late TextEditingController _textController;
   ChatMessage? _playingMessage;
+
+  String get extensionName {
+    switch (recordConfig.encoder) {
+      case AudioEncoder.aacLc:
+      case AudioEncoder.aacEld:
+      case AudioEncoder.aacHe:
+        return 'm4a';
+      case AudioEncoder.amrNb:
+      case AudioEncoder.amrWb:
+        return '3gp';
+      case AudioEncoder.opus:
+        return 'opus';
+      case AudioEncoder.flac:
+        return 'flac';
+      case AudioEncoder.wav:
+        return 'wav';
+      case AudioEncoder.pcm16bits:
+        return 'pcm';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    recordConfig = const RecordConfig(
+      encoder: AudioEncoder.aacLc,
+      bitRate: 128000,
+      sampleRate: 44100,
+      numChannels: 1,
+    );
+    getTemporaryDirectory().then((value) => _directory = value);
     _textController =
         widget.inputBarTextEditingController ?? TextEditingController();
     widget.messageListViewController.markAllMessagesAsRead();
@@ -529,7 +560,10 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     }).then((value) async {
       if (value == true) {
         _startTimer();
-        await _audioRecorder.start();
+        fileName =
+            "${DateTime.now().millisecondsSinceEpoch.toString()}.$extensionName";
+        await _audioRecorder.start(recordConfig,
+            path: "${_directory!.path}/$fileName");
       } else {
         if (!isRequest) {
           widget.onError?.call(ChatUIKitError.toChatError(

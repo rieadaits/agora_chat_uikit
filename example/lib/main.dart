@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 // jashem:
 String jashemToken =
-    "007eJxTYHjFe/fJLMetYTr7lkycd0nt4Dqlrfs3v9/U384VsbTPTStZgcHMOMnY0CLNxNQk1cLEwNQi0cQkzTw5ycg42dLcLCnReJ5WZHpDICNDLLM9IyMDKwMjEIL4KgyWKUmpJuZJBrqGBsbJuoaGqWm6lhaJRrpJpgYpRqlJJkYpZiYA0SonXw==";
+    "007eJxTYLj+lzFGQmH+/4eBs9jPbiz3zdv8Lr2gRkBjl9qeAPcXulMVGMyMk4wNLdJMTE1SLUwMTC0STUzSzJOTjIyTLc3NkhKNF0ruyGgIZGTw2u/OwsjAysAIhCC+CoNlSlKqiXmSga6hgXGyrqFhapqupUWikW6SqUGKUWqSiVGKmQkATksmzg==";
 
 //riead
 String rieadToken =
@@ -98,9 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _signIn();
                     },
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.lightBlue),
+                          WidgetStateProperty.all(Colors.lightBlue),
                     ),
                     child: const Text("SIGN IN"),
                   ),
@@ -112,9 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _signOut();
                     },
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.lightBlue),
+                          WidgetStateProperty.all(Colors.lightBlue),
                     ),
                     child: const Text("SIGN OUT"),
                   ),
@@ -138,9 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     _pushToChatPage(_chatId);
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.lightBlue),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    backgroundColor: WidgetStateProperty.all(Colors.lightBlue),
                   ),
                   child: const Text("START CHAT"),
                 ),
@@ -152,8 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 _pushToConversationPage();
               },
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-                backgroundColor: MaterialStateProperty.all(Colors.lightBlue),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                backgroundColor: WidgetStateProperty.all(Colors.lightBlue),
               ),
               child: const Text("CONVERSATION"),
             ),
@@ -203,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _addLogToConsole('begin sign in...');
     if (ChatConfig.agoraToken.isNotEmpty) {
       try {
-        await ChatClient.getInstance.loginWithAgoraToken(
+        await ChatClient.getInstance.loginWithToken(
           ChatConfig.userId,
           ChatConfig.agoraToken,
         );
