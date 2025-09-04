@@ -4,22 +4,27 @@ import 'package:flutter/material.dart';
 
 import 'chat_message_list_video_item.dart';
 
-class CustomMessagesPage extends StatefulWidget {
-  const CustomMessagesPage(this.conversation, {super.key});
+class ArchiveMessagesPage extends StatefulWidget {
+  const ArchiveMessagesPage(
+    this.conversation, {
+    super.key,
+  });
 
   final ChatConversation conversation;
 
   @override
-  State<CustomMessagesPage> createState() => _CustomMessagesPageState();
+  State<ArchiveMessagesPage> createState() => _ArchiveMessagesPageState();
 }
 
-class _CustomMessagesPageState extends State<CustomMessagesPage> {
+class _ArchiveMessagesPageState extends State<ArchiveMessagesPage> {
   late final ChatMessageListController controller;
+  String groupName = '';
 
   @override
   void initState() {
     super.initState();
     controller = ChatMessageListController(widget.conversation);
+    // getGroupNameById();
   }
 
   @override
@@ -28,30 +33,32 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
     super.dispose();
   }
 
+  // getGroupNameById() async {
+  //   ChatCursorResult<ChatGroupInfo> grpData =
+  //       await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+  //
+  //   final data = grpData.data;
+  //
+  //   for (var element in data) {
+  //     if (element.groupId == widget.conversation.id) {
+  //       setState(() {
+  //         groupName = element.name!;
+  //       });
+  //     }
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.conversation.id),
-        actions: [
-          UnconstrainedBox(
-            child: InkWell(
-              onTap: () {
-                controller.deleteAllMessages();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Delete',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          )
-        ],
+        backgroundColor: Colors.white,
       ),
       body: SafeArea(
         child: ChatMessagesView(
+          canStartChat: false,
           messageListViewController: controller,
           conversation: widget.conversation,
           onError: (error) {

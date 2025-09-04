@@ -52,6 +52,7 @@ class ChatMessagesView extends StatefulWidget {
     required this.conversation,
     this.inputBarTextEditingController,
     this.background,
+    this.canStartChat = true,
     this.inputBar,
     this.onTap,
     this.onBubbleLongPress,
@@ -71,6 +72,9 @@ class ChatMessagesView extends StatefulWidget {
             ChatMessageListController(conversation);
 
   final Widget? background;
+
+  /// User can start Chat.
+  final bool canStartChat;
 
   /// Text input widget text editing controller.
   final TextEditingController? inputBarTextEditingController;
@@ -130,8 +134,11 @@ class ChatMessagesView extends StatefulWidget {
 }
 
 class _ChatMessagesViewState extends State<ChatMessagesView> {
+  late final RecordConfig recordConfig;
+  Directory? _directory;
+  String? fileName;
   final ImagePicker _picker = ImagePicker();
-  final Record _audioRecorder = Record();
+  final AudioRecorder _audioRecorder = AudioRecorder();
   final AudioPlayer _player = AudioPlayer();
   final FocusNode _focusNode = FocusNode();
   int _recordDuration = 0;
@@ -140,9 +147,37 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
   Timer? _timer;
   late TextEditingController _textController;
   ChatMessage? _playingMessage;
+
+  String get extensionName {
+    switch (recordConfig.encoder) {
+      case AudioEncoder.aacLc:
+      case AudioEncoder.aacEld:
+      case AudioEncoder.aacHe:
+        return 'm4a';
+      case AudioEncoder.amrNb:
+      case AudioEncoder.amrWb:
+        return '3gp';
+      case AudioEncoder.opus:
+        return 'opus';
+      case AudioEncoder.flac:
+        return 'flac';
+      case AudioEncoder.wav:
+        return 'wav';
+      case AudioEncoder.pcm16bits:
+        return 'pcm';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    recordConfig = const RecordConfig(
+      encoder: AudioEncoder.aacLc,
+      bitRate: 128000,
+      sampleRate: 44100,
+      numChannels: 1,
+    );
+    getTemporaryDirectory().then((value) => _directory = value);
     _textController =
         widget.inputBarTextEditingController ?? TextEditingController();
     widget.messageListViewController.markAllMessagesAsRead();
@@ -216,50 +251,55 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
             },
           ),
         ),
-        widget.inputBar ??
-            ChatInputBar(
-              textEditingController: _textController,
-              focusNode: _focusNode,
-              inputWidgetOnTap: () {
-                if (!_focusNode.hasFocus) {
-                  _focusNode.requestFocus();
-                }
-                widget.messageListViewController.refreshUI(moveToEnd: true);
-              },
-              emojiWidgetOnTap: () {
-                if (_focusNode.hasFocus) {
-                  _focusNode.unfocus();
-                }
-                widget.messageListViewController.refreshUI(moveToEnd: true);
-              },
-              recordTouchDown: () async {
-                await _startRecord();
-              },
-              recordTouchUpInside: () async {
-                await _stopRecord();
-              },
-              recordTouchUpOutside: _cancelRecord,
-              recordDragInside: _recordDragInside,
-              recordDragOutside: _recordDragOutside,
-              moreAction: showMoreItems,
-              onTextFieldChanged: (text) {},
-              onSendBtnTap: (text) {
-                var msg = ChatMessage.createTxtSendMessage(
-                    targetId: widget.conversation.id, content: text);
-                msg.chatType = ChatType.values[widget.conversation.type.index];
-                ChatMessage? willSend;
-                if (widget.willSendMessage != null) {
-                  willSend = widget.willSendMessage!.call(msg);
-                  if (willSend == null) {
-                    return;
+        if (widget.canStartChat)
+          widget.inputBar ??
+              ChatInputBar(
+                textEditingController: _textController,
+                focusNode: _focusNode,
+                inputWidgetOnTap: () {
+                  if (!_focusNode.hasFocus) {
+                    _focusNode.requestFocus();
                   }
-                } else {
-                  willSend = msg;
-                }
+                  widget.messageListViewController.refreshUI(moveToEnd: true);
+                },
+                emojiWidgetOnTap: () {
+                  if (_focusNode.hasFocus) {
+                    _focusNode.unfocus();
+                  }
+                  widget.messageListViewController.refreshUI(moveToEnd: true);
+                },
+                recordTouchDown: () async {
+                  await _startRecord();
+                },
+                recordTouchUpInside: () async {
+                  await _stopRecord();
+                },
+                recordTouchUpOutside: _cancelRecord,
+                recordDragInside: _recordDragInside,
+                recordDragOutside: _recordDragOutside,
+                moreAction: showMoreItems,
+                onTextFieldChanged: (text) {},
+                onSendBtnTap: (text) {
+                  var msg = ChatMessage.createTxtSendMessage(
+                      targetId: widget.conversation.id, content: text);
+                  msg.chatType =
+                      ChatType.values[widget.conversation.type.index];
+                  ChatMessage? willSend;
+                  if (widget.willSendMessage != null) {
+                    willSend = widget.willSendMessage!.call(msg);
+                    if (willSend == null) {
+                      return;
+                    }
+                  } else {
+                    willSend = msg;
+                  }
 
-                widget.messageListViewController.sendMessage(willSend);
-              },
-            )
+                  widget.messageListViewController.sendMessage(willSend);
+                },
+              ),
+        const SizedBox(
+          height: 10,
+        ),
       ],
     );
 
@@ -338,32 +378,30 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
             200, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 80,
       );
-      if (imageData != null) {
-        final directory = await getApplicationCacheDirectory();
-        String thumbnailPath =
-            '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
-        final file = File(thumbnailPath);
-        file.writeAsBytesSync(imageData);
+      final directory = await getApplicationCacheDirectory();
+      String thumbnailPath =
+          '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
+      final file = File(thumbnailPath);
+      file.writeAsBytesSync(imageData);
 
-        final videoFile = File(video.path);
+      final videoFile = File(video.path);
 
-        Image.file(file)
-            .image
-            .resolve(const ImageConfiguration())
-            .addListener(ImageStreamListener((info, synchronousCall) {
-          final msg = ChatMessage.createVideoSendMessage(
-            targetId: widget.messageListViewController.conversation.id,
-            filePath: video.path,
-            thumbnailLocalPath: file.path,
-            chatType: ChatType.values[
-                widget.messageListViewController.conversation.type.index],
-            width: info.image.width.toDouble(),
-            height: info.image.height.toDouble(),
-            fileSize: videoFile.sizeInBytes,
-          );
-          widget.messageListViewController.sendMessage(msg);
-        }));
-      }
+      Image.file(file)
+          .image
+          .resolve(const ImageConfiguration())
+          .addListener(ImageStreamListener((info, synchronousCall) {
+        final msg = ChatMessage.createVideoSendMessage(
+          targetId: widget.messageListViewController.conversation.id,
+          filePath: video.path,
+          thumbnailLocalPath: file.path,
+          chatType: ChatType
+              .values[widget.messageListViewController.conversation.type.index],
+          width: info.image.width.toDouble(),
+          height: info.image.height.toDouble(),
+          fileSize: videoFile.sizeInBytes,
+        );
+        widget.messageListViewController.sendMessage(msg);
+      }));
     }
   }
 
@@ -522,7 +560,10 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     }).then((value) async {
       if (value == true) {
         _startTimer();
-        await _audioRecorder.start();
+        fileName =
+            "${DateTime.now().millisecondsSinceEpoch.toString()}.$extensionName";
+        await _audioRecorder.start(recordConfig,
+            path: "${_directory!.path}/$fileName");
       } else {
         if (!isRequest) {
           widget.onError?.call(ChatUIKitError.toChatError(

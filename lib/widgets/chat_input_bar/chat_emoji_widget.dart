@@ -70,7 +70,7 @@ class ChatExpression extends StatelessWidget {
     );
     return TextButton(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(
+        padding: WidgetStateProperty.all(
           EdgeInsets.all(bigSizeRatio),
         ),
       ),

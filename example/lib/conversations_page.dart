@@ -1,7 +1,7 @@
 import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:flutter/material.dart';
 
-import 'custom_video_message/custom_message_page.dart';
+import 'custom_video_message/archive_message_page.dart';
 
 class ConversationsPage extends StatefulWidget {
   const ConversationsPage({super.key});
@@ -14,7 +14,10 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Conversations")),
+      appBar: AppBar(
+        title: const Text("Conversations"),
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.white,
       // Conversation view page in uikit
       body: ChatConversationsView(
@@ -23,20 +26,20 @@ class _ConversationsPageState extends State<ConversationsPage> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
-                return CustomMessagesPage(conversation);
+                return ArchiveMessagesPage(conversation);
               },
             ),
           );
         },
         avatarBuilder: (context, conversation) {
-          return Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.cyan,
-              shape: BoxShape.circle,
-            ),
-          );
+          ///Can be returned any Widget
+          // return Container(
+          //   width: 40,
+          //   height: 40,
+          //   decoration: BoxDecoration(
+          //     shape: BoxShape.circle,
+          //   ),
+          // );
         },
       ),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../agora_chat_uikit.dart';
 
-class ChatConversationListTile extends StatelessWidget {
+class ChatConversationListTile extends StatefulWidget {
   const ChatConversationListTile({
     super.key,
     this.avatar,
@@ -21,9 +21,37 @@ class ChatConversationListTile extends StatelessWidget {
   final ChatConversation conversation;
 
   @override
+  State<ChatConversationListTile> createState() =>
+      _ChatConversationListTileState();
+}
+
+class _ChatConversationListTileState extends State<ChatConversationListTile> {
+  @override
+  void initState() {
+    super.initState();
+    // getGroupNameById();
+  }
+
+  // getGroupNameById() async{
+  //   ChatCursorResult<ChatGroupInfo> grpData =
+  //   await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+  //
+  //   final data = grpData.data;
+  //
+  //   for (var element in data) {
+  //     if(element.groupId == widget.conversation.id){
+  //       setState(() {
+  //         groupName = element.name!;
+  //       });
+  //     }
+  //   }
+  //
+  // }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: conversation.latestMessage(),
+      future: widget.conversation.latestMessage(),
       builder: (context, snapshot) {
         ChatMessage? msg;
         if (snapshot.hasData) {
@@ -31,19 +59,19 @@ class ChatConversationListTile extends StatelessWidget {
         }
 
         return ListTile(
-          leading: avatar,
-          title: title ??
+          leading: widget.avatar,
+          title: widget.title ??
               Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: title ??
+                      child: widget.title ??
                           Text(
-                            conversation.id,
+                            widget.conversation.id,
                             style: const TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -56,7 +84,7 @@ class ChatConversationListTile extends StatelessWidget {
                           const TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                   ]),
-          subtitle: subtitle ??
+          subtitle: widget.subtitle ??
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Expanded(child: Builder(
                   builder: (context) {
@@ -71,14 +99,14 @@ class ChatConversationListTile extends StatelessWidget {
                   },
                 )),
                 FutureBuilder<int>(
-                  future: conversation.unreadCount(),
+                  future: widget.conversation.unreadCount(),
                   builder: (context, snapshot) {
                     return ChatBadgeWidget(snapshot.data ?? 0);
                   },
                 )
               ]),
-          trailing: trailing,
-          onTap: () => onTap?.call(conversation),
+          trailing: widget.trailing,
+          onTap: () => widget.onTap?.call(widget.conversation),
         );
       },
     );

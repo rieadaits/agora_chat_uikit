@@ -1,14 +1,24 @@
 import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/conversations_page.dart';
-import 'package:example/custom_video_message/custom_message_page.dart';
 import 'package:example/messages_page.dart';
 import 'package:flutter/material.dart';
 
+// jashem:
+String jashemToken =
+    "007eJxTYLj+lzFGQmH+/4eBs9jPbiz3zdv8Lr2gRkBjl9qeAPcXulMVGMyMk4wNLdJMTE1SLUwMTC0STUzSzJOTjIyTLc3NkhKNF0ruyGgIZGTw2u/OwsjAysAIhCC+CoNlSlKqiXmSga6hgXGyrqFhapqupUWikW6SqUGKUWqSiVGKmQkATksmzg==";
+
+//riead
+String rieadToken =
+    "007eJxTYFhnllZVXzQ1ST+Su+u6xjWHUG53heCvy7kitErzdl006FBgMDNOMja0SDMxNUm1MDEwtUg0MUkzT04yMk62NDdLSjT+Z3cjrSGQkcFmDi8rIwMrAyMQgvgqDOaplkYplqYGuoYGxsm6hoapabpJxhapumYpZskpFhYmxuYpxgBHaSRx";
+
+//enamul
+String enamulToken =
+    "007eJxTYDh90qf28pzH2VvD+Nt3hW94YHslaOb6Ko4styU986e2mkUqMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaWyaFpjUEMjKIxO1kZWRgZWAEQhBfhcEiMcks1dLMQNfQwDhZ19AwNU030dDISNciyTApxdw0NTXRzAQAqgYnRA==";
+
 class ChatConfig {
-  static String appKey = '611147007#1332714';
-  static String userId = "enamul";
-  static String agoraToken =
-      "007eJxTYPD46327Y2OTndTkN/Wrvyav435n/tPT7OAEnk8b1HNM498pMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaf3rildYQyMhgO9WUlZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMA+ZMoiA==";
+  static String appKey = "611147007#1332714";
+  static String userId = "jashem";
+  static String agoraToken = jashemToken;
 }
 
 void main() async {
@@ -25,6 +35,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -57,6 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
   ChatConversation? conversation;
   String _chatId = "";
   final List<String> _logText = [];
+  final String groupIdOne = "248845270319106";
+  final String groupIdTwo = "248848107765762";
+  final String groupIdThree = "249018086129665";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,9 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _signIn();
                     },
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.lightBlue),
+                          WidgetStateProperty.all(Colors.lightBlue),
                     ),
                     child: const Text("SIGN IN"),
                   ),
@@ -97,9 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _signOut();
                     },
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.lightBlue),
+                          WidgetStateProperty.all(Colors.lightBlue),
                     ),
                     child: const Text("SIGN OUT"),
                   ),
@@ -118,45 +133,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        pushToChatPage(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("START CHAT"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        pushToCustomChatPage(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("CUSTOM CHAT"),
-                    ),
-                  ],
-                )
+                TextButton(
+                  onPressed: () {
+                    _pushToChatPage(_chatId);
+                  },
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    backgroundColor: WidgetStateProperty.all(Colors.lightBlue),
+                  ),
+                  child: const Text("START CHAT"),
+                ),
               ],
             ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                pushToConversationPage();
+                _pushToConversationPage();
               },
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-                backgroundColor: MaterialStateProperty.all(Colors.lightBlue),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                backgroundColor: WidgetStateProperty.all(Colors.lightBlue),
               ),
               child: const Text("CONVERSATION"),
             ),
@@ -175,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void pushToConversationPage() async {
+  void _pushToConversationPage() async {
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;
@@ -185,38 +181,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }));
   }
 
-  void pushToChatPage(String userId) async {
-    if (userId.isEmpty) {
-      _addLogToConsole('UserId is null');
-      return;
-    }
+  void _pushToChatPage(String userId) async {
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;
     }
     ChatConversation? conv =
         await ChatClient.getInstance.chatManager.getConversation(userId);
-    Future(() {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return MessagesPage(conv!);
-      }));
-    });
-  }
 
-  void pushToCustomChatPage(String userId) async {
-    if (userId.isEmpty) {
-      _addLogToConsole('UserId is null');
-      return;
-    }
-    if (ChatClient.getInstance.currentUserId == null) {
-      _addLogToConsole('user not login');
-      return;
-    }
-    ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(userId);
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return CustomMessagesPage(conv!);
+        return MessagesPage(
+          conv!,
+        );
       }));
     });
   }
@@ -225,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _addLogToConsole('begin sign in...');
     if (ChatConfig.agoraToken.isNotEmpty) {
       try {
-        await ChatClient.getInstance.loginWithAgoraToken(
+        await ChatClient.getInstance.loginWithToken(
           ChatConfig.userId,
           ChatConfig.agoraToken,
         );

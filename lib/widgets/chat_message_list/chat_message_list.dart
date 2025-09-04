@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+
 import 'package:agora_chat_uikit/internal/chat_method.dart';
+import 'package:flutter/material.dart';
 
 import '../../agora_chat_uikit.dart';
 
@@ -37,6 +39,8 @@ class ChatMessageListController extends ChatBaseController {
   /// Other types of messages require a separate call to the [ChatMessageListController.sendReadAck] method, which is invalidated if turned off.
   final bool enableReadAck;
   final List<ChatMessageListItemModel> msgList = [];
+  int count = 30;
+  String? cursor;
 
   void updateMsgList(List<ChatMessageListItemModel> list) {
     msgList.addAll(list);
@@ -97,7 +101,7 @@ class ChatMessageListController extends ChatBaseController {
   /// load messages and refresh list.
   ///
   /// Param [count] load count.
-  Future<void> loadMoreMessage([int count = 10]) async {
+  Future<void> loadMoreMessage() async {
     if (_loading) return;
     _loading = true;
     if (!_hasMore) {
@@ -105,11 +109,33 @@ class ChatMessageListController extends ChatBaseController {
       return;
     }
 
-    List<ChatMessage> list = await conversation.loadMessages(
-      startMsgId: msgList.isEmpty ? "" : msgList.last.msgId,
-      loadCount: count,
+    FetchMessageOptions options = FetchMessageOptions(
+      from: ChatClient.getInstance.currentUserId,
+      direction: ChatSearchDirection.Down,
+      endTs: DateTime.now().toUtc().millisecondsSinceEpoch,
     );
-    if (list.length < count) {
+
+    ChatCursorResult<ChatMessage> result =
+        await ChatClient.getInstance.chatManager.fetchHistoryMessagesByOption(
+      conversation.id,
+      ChatConversationType.Chat,
+      pageSize: count,
+      cursor: cursor,
+      options: options,
+    );
+
+    final list = result.data;
+    cursor = result.cursor;
+
+    /// Loads multiple messages from the local database.
+    // List<ChatMessage> list = await conversation.loadMessages(
+    //   startMsgId: msgList.isEmpty ? "" : msgList.last.msgId,
+    //   loadCount: count,
+    // );
+
+    log("object: ${result.cursor}");
+
+    if (cursor == "undefined") {
       _hasMore = false;
     }
 
@@ -189,7 +215,7 @@ class ChatMessageListController extends ChatBaseController {
   /// If the message roaming interface is called, the deleted message can still be retrieved.
   /// current conversation see [ChatMessagesList]. message roaming see [ChatManager.fetchHistoryMessages].
   Future<void> deleteAllMessages() async {
-    await chatClient.chatManager.deleteConversation(conversation.id);
+    await chatClient.chatManager.deleteRemoteConversation(conversation.id);
     _latestShowTsTime = -1;
     msgList.clear();
     refreshUI();
@@ -290,6 +316,9 @@ class ChatMessageListController extends ChatBaseController {
         },
         onMessagesRead: _updateMessageItems,
         onMessagesReceived: (messages) {
+          for (var element in messages) {
+            debugPrint("message received: ${element.chatType.name}");
+          }
           List<ChatMessage> tmp = messages
               .where((element) => element.conversationId == conversation.id)
               .toList();

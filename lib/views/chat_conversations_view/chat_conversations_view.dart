@@ -73,10 +73,22 @@ class ChatConversationsController extends ChatBaseController {
     removeChatListener();
   }
 
-  /// load all conversations and refresh the list.
+  /// load all conversations Locally and refresh the list.
+  // Future<void> loadAllConversations() async {
+  //   List<ChatConversation> list =
+  //       await ChatClient.getInstance.chatManager.loadAllConversations();
+  //   conversationList = await sortHandle?.call(list) ?? list;
+  // }
+
   Future<void> loadAllConversations() async {
-    List<ChatConversation> list =
-        await ChatClient.getInstance.chatManager.loadAllConversations();
+    ChatCursorResult<ChatConversation> result =
+        await ChatClient.getInstance.chatManager.fetchConversationsByOptions(
+            options: ConversationFetchOptions(
+      pageSize: 50,
+    ));
+
+    List<ChatConversation> list = result.data;
+
     conversationList = await sortHandle?.call(list) ?? list;
   }
 
@@ -88,6 +100,7 @@ class ChatConversationsController extends ChatBaseController {
     int index = list.indexWhere((element) => element.id == id);
     if (index >= 0) {
       list.removeAt(index);
+      await ChatClient.getInstance.chatManager.deleteRemoteConversation(id);
       await ChatClient.getInstance.chatManager.deleteConversation(id);
       conversationList = await sortHandle?.call(list) ?? list;
     }
@@ -387,8 +400,10 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
                           avatar: widget.avatarBuilder
                                   ?.call(context, conversation) ??
                               ChatImageLoader.defaultAvatar(size: 50),
-                          title: widget.nicknameBuilder
-                              ?.call(context, conversation),
+                          title: widget.nicknameBuilder?.call(
+                            context,
+                            conversation,
+                          ),
                           conversation: conversation,
                           onTap: (conversation) {
                             widget.onItemTap?.call(conversation);
