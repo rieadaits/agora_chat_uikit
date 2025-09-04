@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:agora_chat_uikit/generated/uikit_localizations.dart';
+import 'package:flutter/material.dart';
 
 import '../../tools/chat_image_loader.dart';
 import '../chat_uikit.dart';
@@ -290,7 +290,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         : Padding(
                             padding: const EdgeInsets.all(2),
                             child: ChatImageLoader.loadImage(
-                              "input_bar_emoji.png",
+                              "input_bar_btn_selected.png",
                               width: 29,
                               height: 29,
                             ),

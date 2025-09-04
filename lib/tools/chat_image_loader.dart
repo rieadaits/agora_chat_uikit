@@ -8,18 +8,41 @@ class ChatImageLoader {
     BoxFit fit = BoxFit.fill,
     Color? color,
   }) {
-    return Image.asset(
-      "images/$name",
-      width: width,
-      height: height,
-      fit: fit,
-      package: "agora_chat_uikit",
-      color: color,
-    );
+    // Try to load from local assets first (for example app), then fallback to package assets
+    try {
+      return Image.asset(
+        "assets/images/$name",
+        width: width,
+        height: height,
+        fit: fit,
+        color: color,
+        errorBuilder: (context, error, stackTrace) {
+          // If local asset fails, try package asset
+          return Image.asset(
+            "assets/images/$name",
+            width: width,
+            height: height,
+            fit: fit,
+            package: "agora_chat_uikit",
+            color: color,
+          );
+        },
+      );
+    } catch (e) {
+      // Fallback to package asset
+      return Image.asset(
+        "assets/images/$name",
+        width: width,
+        height: height,
+        fit: fit,
+        package: "agora_chat_uikit",
+        color: color,
+      );
+    }
   }
 
   static ImageProvider<Object> assetImage(String name) {
-    return AssetImage("images/$name", package: "agora_chat_uikit");
+    return AssetImage("assets/images/$name", package: "agora_chat_uikit");
   }
 
   static Widget defaultAvatar({
